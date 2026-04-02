@@ -44,7 +44,7 @@ A clean, modern, and interactive finance tracking dashboard built with React and
    npm run dev
    \`\`\`
 
-3. Open the output Local URL (usually `http://localhost:5173`) in your browser to view the application.
+3. Open the output Local URL (usually `http://localhost:5174`) in your browser to view the application.
 
 ## Design Decisions
 
