@@ -1,121 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from 'react';
+import { AppProvider } from './context/AppContext';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import Overview from './components/Overview';
+import Transactions from './components/Transactions';
+import Insights from './components/Insights';
+import { Menu, X } from 'lucide-react';
 
-function App() {
-  const [count, setCount] = useState(0)
+const DashboardLayout = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const renderContent = () => {
+    switch(activeTab) {
+      case 'overview': return <Overview />;
+      case 'transactions': return <Transactions />;
+      case 'insights': return <Insights />;
+      default: return <Overview />;
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-container">
+      {/* Mobile Sidebar Toggle Area */}
+      <div 
+        className={`sidebar ${isSidebarOpen ? 'open' : ''}`} 
+        onClick={() => setIsSidebarOpen(false)}
+      >
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
+      
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40 }} onClick={() => setIsSidebarOpen(false)} />
+      )}
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main className="main-content">
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-primary)' }}>
+          <button 
+            className="btn-icon" 
+            style={{ display: 'none', marginLeft: '16px', marginTop: '16px', zIndex: 100 }} 
+            onClick={() => setIsSidebarOpen(true)}
+            id="mobile-menu-btn"
+          >
+            <Menu size={24} />
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+        <Header />
+        <div className="dashboard-content">
+          {renderContent()}
         </div>
-      </section>
+      </main>
+      
+      <style>{`
+        @media (max-width: 768px) {
+          #mobile-menu-btn {
+            display: block !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+const App = () => {
+  return (
+    <AppProvider>
+      <DashboardLayout />
+    </AppProvider>
+  );
+};
 
-export default App
+export default App;
